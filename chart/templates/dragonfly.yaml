@@ -1,14 +1,15 @@
+{{- $p := .Values.namePrefix }}
 apiVersion: dragonflydb.io/v1alpha1
 kind: Dragonfly
 metadata:
   labels:
     skaffold.dev/keep: "true"
-  name: checkers-redis
+  name: {{ $p }}checkers-redis
 spec:
   image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.37.0
   authentication:
     passwordFromSecret:
-      name: checkers-redis-auth
+      name: {{ $p }}checkers-redis-auth
       key: password
   resources:
     requests:

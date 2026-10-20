@@ -30,3 +30,30 @@ deploy:
       # Keep labeled chart resources when Skaffold cleans up.
       delete:
         - --selector=skaffold.dev/keep!=true
+
+profiles:
+  # Agent workers share one namespace and may only create resources named
+  # "<agent>-*". No in-cluster registry is provisioned for them, so deploy the
+  # published image instead of building. OIDCClient, ServersTransport and
+  # PodMonitor creation is not permitted, so login, backend HTTPS and the
+  # PodMonitor are disabled.
+  - name: agent
+    patches:
+      - op: remove
+        path: /build
+      - op: replace
+        path: /manifests/helm/releases/0
+        value:
+          name: "{{.AGENT_NAME}}-checkers"
+          chartPath: chart
+          namespace: "{{.TASK_NAMESPACE}}"
+          setValues:
+            image: ghcr.io/codemowers/checkers:sha-00cde6b
+            networkPolicy.enabled: true
+            oidc.enabled: false
+            podMonitor.enabled: false
+            env.AUTH_MODE: anon
+            env.ENABLE_LOCAL_PLAY: "true"
+          setValueTemplates:
+            namePrefix: "{{.AGENT_NAME}}-"
+            domain: "{{.AGENT_NAME}}-checkers"

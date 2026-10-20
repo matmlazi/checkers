@@ -1,8 +1,9 @@
+{{- $p := .Values.namePrefix }}
 {{- if .Values.https.enabled }}
 apiVersion: traefik.io/v1alpha1
 kind: ServersTransport
 metadata:
-  name: checkers-tls
+  name: {{ $p }}checkers-tls
 spec:
-  serverName: checkers-web.{{ .Release.Namespace }}.svc.cluster.local
+  serverName: {{ $p }}checkers-web.{{ .Release.Namespace }}.svc.cluster.local
 {{- end }}

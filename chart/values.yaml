@@ -1,11 +1,22 @@
 domain: checkers
 
+# Prepended to every resource name and pod label, e.g. "matmlazi-".
+namePrefix: ""
+
 # Public listener uses HTTP unless the deployment enables HTTPS.
 https:
   enabled: false
 # Registry/namespace prefix for short image names. Full image paths override it.
 imageRegistry: ghcr.io/codemowers
 image: checkers:latest
+
+# Passmower login; requires permission to create OIDCClient resources.
+oidc:
+  enabled: true
+
+# Created only when the PodMonitor API is installed.
+podMonitor:
+  enabled: true
 
 # Cluster-specific ingress, DNS and OIDC selectors; enabled by Skaffold.
 networkPolicy:

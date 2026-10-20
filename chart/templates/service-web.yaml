@@ -1,16 +1,17 @@
+{{- $p := .Values.namePrefix }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: checkers-web
+  name: {{ $p }}checkers-web
   {{- if .Values.https.enabled }}
   annotations:
-    traefik.ingress.kubernetes.io/service.serverstransport: {{ printf "%s-checkers-tls@kubernetescrd" .Release.Namespace | quote }}
+    traefik.ingress.kubernetes.io/service.serverstransport: {{ printf "%s-%scheckers-tls@kubernetescrd" .Release.Namespace $p | quote }}
   {{- end }}
   labels:
-    app: checkers-web
+    app: {{ $p }}checkers-web
 spec:
   selector:
-    app: checkers-web
+    app: {{ $p }}checkers-web
   ports:
     - name: {{ ternary "https" "http" .Values.https.enabled }}
       port: {{ ternary 443 3000 .Values.https.enabled }}
