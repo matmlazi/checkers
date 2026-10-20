@@ -1,8 +1,7 @@
-{{- $p := .Values.namePrefix }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $p }}checkers
+  name: {{ .Release.Name }}
 spec:
   rules:
     - host: {{ .Values.domain }}
@@ -12,6 +11,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ $p }}checkers-web
+                name: {{ .Release.Name }}-web
                 port:
                   name: {{ ternary "https" "http" .Values.https.enabled }}

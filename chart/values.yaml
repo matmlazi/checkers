@@ -1,8 +1,5 @@
 domain: checkers
 
-# Prepended to every resource name and pod label, e.g. "matmlazi-".
-namePrefix: ""
-
 # Public listener uses HTTP unless the deployment enables HTTPS.
 https:
   enabled: false

@@ -57,5 +57,4 @@ profiles:
             env.AUTH_MODE: anon
             env.ENABLE_LOCAL_PLAY: "true"
           setValueTemplates:
-            namePrefix: "{{.AGENT_NAME}}-"
             domain: "{{.AGENT_NAME}}-checkers"

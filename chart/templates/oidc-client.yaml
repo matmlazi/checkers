@@ -1,9 +1,8 @@
-{{- $p := .Values.namePrefix }}
 {{- if .Values.oidc.enabled }}
 apiVersion: codemowers.cloud/v1
 kind: OIDCClient
 metadata:
-  name: {{ $p }}checkers
+  name: {{ .Release.Name }}
 spec:
   displayName: Checkers
   applicationType: web
