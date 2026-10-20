@@ -33,28 +33,32 @@ deploy:
 
 profiles:
   # Agent workers share one namespace and may only create resources named
-  # "<agent>-*". No in-cluster registry is provisioned for them, so deploy the
-  # published image instead of building. OIDCClient, ServersTransport and
-  # PodMonitor creation is not permitted, so login, backend HTTPS and the
-  # PodMonitor are disabled.
+  # "<agent>-*", so the release is named after the agent. No default
+  # repository or Kaniko context upload (pods/exec) is available to them yet,
+  # so deploy the published image instead of building. PodMonitor creation is
+  # not permitted, and Pods may only reference "<agent>-*" Secrets, which rules
+  # out the OIDCClient's generated oidc-client-<name>-owner-secrets.
   - name: agent
     patches:
       - op: remove
         path: /build
       - op: replace
-        path: /manifests/helm/releases/0
+        path: /manifests/helm/releases/0/name
+        value: "{{.AGENT_NAME}}-checkers"
+      - op: replace
+        path: /manifests/helm/releases/0/namespace
+        value: "{{.SKAFFOLD_NAMESPACE}}"
+      - op: add
+        path: /manifests/helm/releases/0/setValues/podMonitor.enabled
+        value: false
+      - op: add
+        path: /manifests/helm/releases/0/setValues/oidc.enabled
+        value: false
+      - op: replace
+        path: /manifests/helm/releases/0/setValues/env.AUTH_MODE
+        value: anon
+      - op: replace
+        path: /manifests/helm/releases/0/setValueTemplates
         value:
-          name: "{{.AGENT_NAME}}-checkers"
-          chartPath: chart
-          namespace: "{{.TASK_NAMESPACE}}"
-          setValues:
-            # Pull through the cluster's Zot cache explicitly: admission's
-            # automatic ghcr.io rewrite currently fails Pod creation.
-            image: zot.registry.ee-lte-1.codemowers.io/ghcr.io/codemowers/checkers:sha-00cde6b
-            networkPolicy.enabled: true
-            oidc.enabled: false
-            podMonitor.enabled: false
-            env.AUTH_MODE: anon
-            env.ENABLE_LOCAL_PLAY: "true"
-          setValueTemplates:
-            domain: "{{.AGENT_NAME}}-checkers"
+          image: checkers:sha-00cde6b
+          domain: "{{.AGENT_NAME}}-checkers"
