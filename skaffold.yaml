@@ -48,7 +48,9 @@ profiles:
           chartPath: chart
           namespace: "{{.TASK_NAMESPACE}}"
           setValues:
-            image: ghcr.io/codemowers/checkers:sha-00cde6b
+            # Pull through the cluster's Zot cache explicitly: admission's
+            # automatic ghcr.io rewrite currently fails Pod creation.
+            image: zot.registry.ee-lte-1.codemowers.io/ghcr.io/codemowers/checkers:sha-00cde6b
             networkPolicy.enabled: true
             oidc.enabled: false
             podMonitor.enabled: false
